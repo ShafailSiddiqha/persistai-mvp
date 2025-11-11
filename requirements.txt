@@ -7,3 +7,6 @@ streamlit-mic-recorder==0.0.4
 openai
 openai-whisper
 ffmpeg-python
+sounddevice
+wavio
+
