@@ -75,21 +75,40 @@ st.markdown(f"> 💬 **{random.choice(quotes)}**")
 # ---------- ABOUT ----------
 with st.expander("💡 About PersistAI"):
     st.markdown("""
-    ### 🧠 Overview
-    PersistAI helps ADHD minds stay in flow by aligning tasks with daily energy levels.
-    It rewards consistency, not perfection, through XP-based gamification.
+    ## ⚡ **PersistAI — ADHD Flow MVP**
+    A Smart Multi-Agent Productivity System inspired by ADHD neuroscience and energy management.
     
-    ### 🎯 Features
-    - Energy-aware task planning  
-    - XP leveling system 🎮  
-    - Weekly performance analytics 📊  
-    - Gentle motivational flow 💛
+    PersistAI helps users with **attention variability** stay in productive “flow states” by adapting tasks, moods, and focus patterns dynamically through **specialized child agents**.
     
-    ### 💻 Built For
-    Persist Ventures AI Engineer Assignment (MVP Stage)
+    ---
+
+    ### 🧭 **Core Philosophy**
+    - 🌊 *Flow Over Force* — work with your rhythm, not against it  
+    - 💫 *Progress > Perfection* — celebrate consistent effort  
+    - 🔁 *Energy-Aware Planning* — tasks adapt to your focus & fatigue  
+    - 🧩 *Modular Intelligence* — each “agent” performs one job well  
+    - 🌱 *Gentle Gamification* — earn XP for calm, sustainable productivity  
+    
+    ---
+
+    ### 🤖 **Agent Ecosystem**
+    | Agent | Function | Symbol |
+    |:------|:----------|:------:|
+    | 🧩 **Tasks Manager** | Add, complete, and earn XP through consistent progress | ✅ |
+    | 📊 **Weekly Report** | Visual progress tracking & task analytics | 📈 |
+    | 🌐 **Browse Agent** | Curated productivity content & ADHD-friendly resources | 🔍 |
+    | 🎧 **Focus Companion** | Pomodoro sessions with ambient sound & loop sync | 🎵 |
+    | 😊 **Mood Agent** | Track emotions and reflections to understand patterns | 💭 |
+    | 💡 **Idea Agent** | Capture spontaneous thoughts via text or voice | 🗣️ |
+    
+    ---
+
+    ### 👩‍💻 **Built By**
+    **Shafail Siddiqha**  
+    for **Persist Ventures AI Engineer Assingment (MVP Stage)**  
+    _“Consistency over intensity — one task, one flow at a time.”_ 🌻
     """)
 
-st.divider()
 
 # ---------- ENERGY ----------
 st.subheader("How energetic do you feel today?")
@@ -131,3 +150,4 @@ else:
     st.success("🧠 Badge: Master of Momentum — Top performer!")
 
 st.markdown("<center><small>Built by <b>Shafail Siddiqha</b> for Persist Ventures AI Assignment</small></center>", unsafe_allow_html=True)
+
