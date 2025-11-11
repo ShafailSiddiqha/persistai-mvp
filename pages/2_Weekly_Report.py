@@ -6,11 +6,11 @@ st.set_page_config(page_title="Weekly Report", page_icon="📊", layout="wide")
 
 st.markdown("""
 <style>
-/* 🌈 Mobile & Desktop Responsive Design for PersistAI */
+/*  Mobile & Desktop Responsive Design for PersistAI */
 
 /* Default desktop/laptop view remains unchanged */
 
-/* 📱 Mobile optimization for width < 768px */
+/*  Mobile optimization for width < 768px */
 @media only screen and (max-width: 768px) {
 
     /* Reduce global padding */
@@ -160,5 +160,6 @@ if pending:
         st.markdown(f"<div class='pending-box'><b>{t['title']}</b><br><small>Pending — Difficulty {t['difficulty']}</small></div>", unsafe_allow_html=True)
 else:
     st.success("🎯 All tasks completed — nothing pending!")
+
 
 
