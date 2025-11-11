@@ -20,7 +20,6 @@ h1, h2, h3 { color: #5A3EBA; font-weight: 700; }
     color: #1E1E2E;
     border-radius: 10px;
     border: none;
-    padding: 0.3rem 0.8rem;
     box-shadow: 0 3px 10px rgba(120,120,160,0.2);
 }
 .stButton>button:hover { transform: scale(1.05); }
@@ -33,16 +32,16 @@ if "tasks" not in st.session_state:
 if "xp" not in st.session_state:
     st.session_state["xp"] = 0
 
-# ---------- HELPERS ----------
+# ---------- FUNCTIONS ----------
 def add_task(title, difficulty):
-    t = {
+    task = {
         "id": int(datetime.utcnow().timestamp()),
         "title": title,
         "difficulty": difficulty,
         "completed": False,
         "created_at": datetime.utcnow().isoformat()
     }
-    st.session_state["tasks"].append(t)
+    st.session_state["tasks"].append(task)
 
 def mark_done(task_id):
     for t in st.session_state["tasks"]:
@@ -52,28 +51,27 @@ def mark_done(task_id):
             xp_gain = 10 * t["difficulty"]
             st.session_state["xp"] += xp_gain
             st.toast(f"🎮 +{xp_gain} XP gained!")
-            return
 
 def delete_task(task_id):
     st.session_state["tasks"] = [t for t in st.session_state["tasks"] if t["id"] != task_id]
 
 # ---------- UI ----------
 st.title("🧩 Tasks Manager")
-st.caption("Add, complete, or delete tasks to track your daily flow.")
+st.caption("Add, complete, or delete your tasks to stay in flow.")
 
 with st.form("add_task_form", clear_on_submit=True):
-    title = st.text_input("Task name")
+    title = st.text_input("Task title")
     difficulty = st.slider("Difficulty (1 easy → 3 hard)", 1, 3, 1)
     submitted = st.form_submit_button("Add Task")
     if submitted:
         if title.strip():
             add_task(title, difficulty)
-            st.success(f"Task added: {title}")
+            st.success(f"Added: {title}")
             st.rerun()
         else:
-            st.warning("Please enter a valid task name.")
+            st.warning("Please enter a task name.")
 
-st.divider()
+st.markdown("---")
 st.subheader("Your Tasks")
 
 if not st.session_state["tasks"]:
@@ -83,7 +81,7 @@ else:
         cols = st.columns([6, 1, 1])
         with cols[0]:
             icon = "✅" if t["completed"] else "⏳"
-            st.write(f"**{t['title']}** — Difficulty: {t['difficulty']} {icon}")
+            st.write(f"**{t['title']}** — Difficulty {t['difficulty']} {icon}")
         with cols[1]:
             if not t["completed"]:
                 if st.button("Done", key=f"done_{t['id']}"):
