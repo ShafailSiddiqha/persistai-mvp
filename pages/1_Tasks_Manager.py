@@ -6,23 +6,77 @@ st.set_page_config(page_title="Tasks Manager", page_icon="🧩", layout="centere
 # ---------- THEME ----------
 st.markdown("""
 <style>
-[data-testid="stAppViewContainer"] {
-    background: linear-gradient(180deg, #FDFBFF 0%, #FAF7FF 100%);
-    font-family: 'Poppins', sans-serif;
-    color: #222;
+/* 🌈 Mobile & Desktop Responsive Design for PersistAI */
+
+/* Default desktop/laptop view remains unchanged */
+
+/* 📱 Mobile optimization for width < 768px */
+@media only screen and (max-width: 768px) {
+
+    /* Reduce global padding */
+    [data-testid="stAppViewContainer"] {
+        padding: 0.8rem !important;
+    }
+
+    /* Center headings and slightly reduce size */
+    h1, h2, h3 {
+        text-align: center !important;
+        font-size: 1.25rem !important;
+    }
+
+    /* Make buttons easy to tap */
+    .stButton>button {
+        width: 100% !important;
+        font-size: 0.95rem !important;
+        border-radius: 12px !important;
+        padding: 0.6rem !important;
+    }
+
+    /* Adjust text fields and sliders */
+    input, .stSlider {
+        font-size: 0.9rem !important;
+    }
+
+    /* Stack metrics vertically for clarity */
+    [data-testid="stMetric"] {
+        display: block !important;
+        text-align: center !important;
+        margin: 0.6rem 0 !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        font-size: 1.1rem !important;
+        color: #f28b82 !important;
+    }
+
+    /* Compact sidebar for mobile */
+    [data-testid="stSidebar"] {
+        width: 230px !important;
+        font-size: 0.9rem !important;
+        padding: 0.5rem !important;
+        background: linear-gradient(180deg, #f3e8ff 0%, #e0f7ff 100%) !important;
+    }
+
+    /* Center info and alert boxes */
+    div.stAlert {
+        text-align: center !important;
+        font-size: 0.9rem !important;
+        border-radius: 12px !important;
+    }
+
+    /* Reduce vertical spacing between sections */
+    .block-container {
+        padding-top: 0.5rem !important;
+        padding-bottom: 0.5rem !important;
+    }
+
+    /* Center footer text */
+    footer {
+        text-align: center !important;
+        font-size: 0.8rem !important;
+    }
 }
-[data-testid="stSidebar"] {
-    background: linear-gradient(180deg, #E3DFFD 0%, #DFF5FF 100%);
-}
-h1, h2, h3 { color: #5A3EBA; font-weight: 700; }
-.stButton>button {
-    background: linear-gradient(90deg, #A1C4FD, #C2E9FB);
-    color: #1E1E2E;
-    border-radius: 10px;
-    border: none;
-    box-shadow: 0 3px 10px rgba(120,120,160,0.2);
-}
-.stButton>button:hover { transform: scale(1.05); }
+
 </style>
 """, unsafe_allow_html=True)
 
@@ -91,3 +145,4 @@ else:
             if st.button("❌", key=f"del_{t['id']}"):
                 delete_task(t["id"])
                 st.rerun()
+
