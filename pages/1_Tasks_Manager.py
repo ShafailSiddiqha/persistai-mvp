@@ -6,11 +6,11 @@ st.set_page_config(page_title="Tasks Manager", page_icon="🧩", layout="centere
 # ---------- THEME ----------
 st.markdown("""
 <style>
-/* 🌈 Mobile & Desktop Responsive Design for PersistAI */
+/*  Mobile & Desktop Responsive Design for PersistAI */
 
 /* Default desktop/laptop view remains unchanged */
 
-/* 📱 Mobile optimization for width < 768px */
+/*  Mobile optimization for width < 768px */
 @media only screen and (max-width: 768px) {
 
     /* Reduce global padding */
@@ -145,4 +145,5 @@ else:
             if st.button("❌", key=f"del_{t['id']}"):
                 delete_task(t["id"])
                 st.rerun()
+
 
