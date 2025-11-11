@@ -4,11 +4,11 @@ import json, os, random, matplotlib.pyplot as plt
 # ---------- PAGE SETTINGS ----------
 st.set_page_config(page_title="PersistAI – ADHD Flow MVP", page_icon="⚡", layout="centered")
 
-/* 🌈 Mobile & Desktop Responsive Design for PersistAI */
+/*  Mobile & Desktop Responsive Design for PersistAI */
 
 /* Default desktop/laptop view remains unchanged */
 
-/* 📱 Mobile optimization for width < 768px */
+/*  Mobile optimization for width < 768px */
 @media only screen and (max-width: 768px) {
 
     /* Reduce global padding */
@@ -160,4 +160,5 @@ else:
     st.success("🧠 Badge: Master of Momentum — Top performer!")
 
 st.markdown("<center><small>Built by <b>Shafail Siddiqha</b> for Persist Ventures AI Assignment</small></center>", unsafe_allow_html=True)
+
 
