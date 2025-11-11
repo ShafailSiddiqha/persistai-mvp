@@ -5,3 +5,5 @@ numpy
 requests
 streamlit-mic-recorder
 openai
+openai-whisper
+
