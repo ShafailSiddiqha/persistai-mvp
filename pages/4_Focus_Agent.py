@@ -52,16 +52,12 @@ st.subheader("🎵 Choose your ambient sound")
 sound_links = {
     "Rain": "rain.mp3",
     "Ocean Waves": "ocean.mp3",
-    "Bird Chirping": "bird chirping.mp3",
+    "Bird Chirping": "bird.mp3",
     "Focus Music": "focus.mp3"
 }
 
 sound_choice = st.radio("Pick a sound:", list(sound_links.keys()), horizontal=True)
-
-# ---------- LOOP MODE ----------
 loop_mode = st.toggle("🔁 Loop Mode (auto-restart every 25 min)", value=True)
-
-# ---------- TIMER SETTINGS ----------
 duration = st.slider("Focus session duration (minutes)", 5, 60, 25)
 
 # ---------- START BUTTON ----------
@@ -71,27 +67,40 @@ if st.button("▶️ Start Focus Session"):
     st.session_state["sound_choice"] = sound_choice
     st.session_state["focus_active"] = True
     st.success(f"🧘 Focus session started with {sound_choice} sound")
+    st.session_state["audio_triggered"] = False
 
 # ---------- TIMER ----------
 if st.session_state.get("focus_active", False):
     elapsed = time.time() - st.session_state["focus_start"]
     remaining = st.session_state["focus_duration"] - elapsed
     progress = max(0, min(1, 1 - (elapsed / st.session_state["focus_duration"])))
-
     minutes_left = int(remaining // 60)
     seconds_left = int(remaining % 60)
 
     st.progress(progress)
     st.metric("⏳ Time Remaining", f"{minutes_left:02d}:{seconds_left:02d}")
 
-    # 🔁 Continuous looping audio via HTML5
+    # ---------- FIXED AUDIO PLAYBACK ----------
+    sound_file = sound_links[st.session_state["sound_choice"]]
     st.markdown(f"""
-        <audio autoplay loop>
-            <source src="{sound_links[st.session_state['sound_choice']]}" type="audio/mp3">
+        <audio id="focusSound" loop>
+            <source src="{sound_file}" type="audio/mpeg">
+            Your browser does not support the audio element.
         </audio>
+        <script>
+            var audio = document.getElementById('focusSound');
+            // play only after user interaction
+            document.addEventListener('click', () => {{
+                if (audio.paused) {{
+                    audio.play().catch(err => console.log('Playback blocked:', err));
+                }}
+            }});
+        </script>
     """, unsafe_allow_html=True)
 
-    # Session end check
+    st.caption("🔊 Tip: If you don't hear sound, click anywhere on the page once to activate audio.")
+
+    # ---------- SESSION END ----------
     if remaining <= 0:
         st.session_state["focus_active"] = False
         st.balloons()
@@ -121,5 +130,4 @@ if not st.session_state.get("focus_active", False) and "focus_start" in st.sessi
         "🧠 Another step toward mastery!"
     ]
     st.success(random.choice(rewards))
-
     st.metric("🏆 Total XP", st.session_state["xp"])
