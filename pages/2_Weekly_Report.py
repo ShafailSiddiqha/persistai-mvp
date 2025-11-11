@@ -47,15 +47,49 @@ c4.markdown(f"<div class='metric-card'><h3>{completion_rate:.1f}%</h3><p>Complet
 
 st.markdown("---")
 
-# Pie chart
+# ---------- DONUT PIE CHART ----------
 if tasks:
+    st.subheader("📈 Task Distribution")
+
     labels = ['Completed', 'Pending']
     sizes = [len(done), len(pending)]
     colors = ['#81C784', '#FBC02D']
-    fig, ax = plt.subplots()
-    ax.pie(sizes, labels=labels, autopct='%1.1f%%', startangle=90, colors=colors)
+
+    # Donut chart (smaller, centered)
+    fig, ax = plt.subplots(figsize=(3.8, 3.8))
+    wedges, texts, autotexts = ax.pie(
+        sizes,
+        labels=labels,
+        autopct='%1.1f%%',
+        startangle=90,
+        colors=colors,
+        wedgeprops={'width': 0.4, 'edgecolor': 'white'},  # donut style
+        textprops={'fontsize': 10, 'color': '#333'}
+    )
+
+    # Center circle (white inner space)
+    centre_circle = plt.Circle((0, 0), 0.70, fc='white')
+    fig.gca().add_artist(centre_circle)
     ax.axis('equal')
-    st.pyplot(fig)
+
+    # Add subtle animation / fade-in
+    st.markdown(
+        """
+        <style>
+        .stPlotlyChart, .stMarkdown {
+            animation: fadein 1.2s ease-in;
+        }
+        @keyframes fadein {
+            from {opacity: 0;}
+            to {opacity: 1;}
+        }
+        </style>
+        """,
+        unsafe_allow_html=True,
+    )
+
+    st.pyplot(fig, use_container_width=False)
+
 
 # Task details
 st.subheader("✅ Completed Tasks")
@@ -71,3 +105,4 @@ if pending:
         st.markdown(f"<div class='pending-box'><b>{t['title']}</b><br><small>Pending — Difficulty {t['difficulty']}</small></div>", unsafe_allow_html=True)
 else:
     st.success("🎯 All tasks completed — nothing pending!")
+
