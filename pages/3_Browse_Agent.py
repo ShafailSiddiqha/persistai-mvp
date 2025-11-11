@@ -292,7 +292,7 @@ for s in suggestions[user_type][band]:
             }
             st.session_state["tasks"].append(new_task)
             st.success(f"Added: {s}")
-            st.experimental_rerun()
+            st.rerun()
 
 st.markdown("---")
 st.caption("🧭 The Browse Agent simulates an intelligent assistant that suggests tasks based on your current mental and physical energy state.")
