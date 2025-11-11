@@ -3,14 +3,10 @@ matplotlib
 pandas
 numpy
 requests
-streamlit-mic-recorder==0.0.4
 openai
 openai-whisper
-ffmpeg-python
+streamlit-mic-recorder==0.0.4
 sounddevice
-wavio
-streamlit-mic-recorder
 soundfile
 ffmpeg-python
-
-
+wavio
