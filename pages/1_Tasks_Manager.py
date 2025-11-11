@@ -6,77 +6,65 @@ st.set_page_config(page_title="Tasks Manager", page_icon="🧩", layout="centere
 # ---------- THEME ----------
 st.markdown("""
 <style>
-/*  Mobile & Desktop Responsive Design for PersistAI */
+/* 🌈 Unified Aesthetic for PersistAI */
 
-/* Default desktop/laptop view remains unchanged */
-
-/*  Mobile optimization for width < 768px */
-@media only screen and (max-width: 768px) {
-
-    /* Reduce global padding */
-    [data-testid="stAppViewContainer"] {
-        padding: 0.8rem !important;
-    }
-
-    /* Center headings and slightly reduce size */
-    h1, h2, h3 {
-        text-align: center !important;
-        font-size: 1.25rem !important;
-    }
-
-    /* Make buttons easy to tap */
-    .stButton>button {
-        width: 100% !important;
-        font-size: 0.95rem !important;
-        border-radius: 12px !important;
-        padding: 0.6rem !important;
-    }
-
-    /* Adjust text fields and sliders */
-    input, .stSlider {
-        font-size: 0.9rem !important;
-    }
-
-    /* Stack metrics vertically for clarity */
-    [data-testid="stMetric"] {
-        display: block !important;
-        text-align: center !important;
-        margin: 0.6rem 0 !important;
-    }
-
-    [data-testid="stMetricValue"] {
-        font-size: 1.1rem !important;
-        color: #f28b82 !important;
-    }
-
-    /* Compact sidebar for mobile */
-    [data-testid="stSidebar"] {
-        width: 230px !important;
-        font-size: 0.9rem !important;
-        padding: 0.5rem !important;
-        background: linear-gradient(180deg, #f3e8ff 0%, #e0f7ff 100%) !important;
-    }
-
-    /* Center info and alert boxes */
-    div.stAlert {
-        text-align: center !important;
-        font-size: 0.9rem !important;
-        border-radius: 12px !important;
-    }
-
-    /* Reduce vertical spacing between sections */
-    .block-container {
-        padding-top: 0.5rem !important;
-        padding-bottom: 0.5rem !important;
-    }
-
-    /* Center footer text */
-    footer {
-        text-align: center !important;
-        font-size: 0.8rem !important;
-    }
+/* Backgrounds */
+[data-testid="stAppViewContainer"] {
+    background: linear-gradient(180deg, #FAF8FF 0%, #FDFBFF 100%);
+    color: #2B2B2B;
+    font-family: 'Poppins', sans-serif;
+}
+[data-testid="stSidebar"] {
+    background: linear-gradient(180deg, #E3DFFD 0%, #DFF5FF 100%);
+    border-right: 1px solid #E2E8F0;
 }
 
+/* Typography */
+h1, h2, h3 {
+    color: #5A3EBA;
+    font-weight: 700;
+}
+
+/* Buttons */
+.stButton>button {
+    background: linear-gradient(90deg, #A1C4FD, #C2E9FB);
+    color: #1E1E2E;
+    border-radius: 10px;
+    border: none;
+    box-shadow: 0 3px 10px rgba(120,120,160,0.2);
+    transition: 0.2s ease-in-out;
+}
+.stButton>button:hover {
+    transform: scale(1.05);
+}
+
+/* Divider */
+hr {
+    border: none;
+    height: 2px;
+    background: linear-gradient(90deg, #C2E9FB, #A1C4FD);
+    border-radius: 2px;
+}
+
+/* Task Cards */
+.task-card {
+    background: #ffffff;
+    border-radius: 10px;
+    padding: 12px 16px;
+    margin-bottom: 10px;
+    box-shadow: 0 3px 12px rgba(120,120,160,0.1);
+}
+
+/* Mobile Responsiveness */
+@media only screen and (max-width: 768px) {
+    [data-testid="stAppViewContainer"] { padding: 0.8rem !important; }
+    h1, h2, h3 { text-align: center !important; font-size: 1.25rem !important; }
+    .stButton>button { width: 100% !important; font-size: 0.95rem !important; border-radius: 12px !important; padding: 0.6rem !important; }
+    [data-testid="stMetric"] { display: block !important; text-align: center !important; margin: 0.6rem 0 !important; }
+    [data-testid="stSidebar"] { width: 230px !important; font-size: 0.9rem !important; padding: 0.5rem !important; }
+    div.stAlert { text-align: center !important; font-size: 0.9rem !important; border-radius: 12px !important; }
+    .task-card { font-size: 0.9rem !important; }
+}
 </style>
 """, unsafe_allow_html=True)
 
@@ -132,6 +120,7 @@ if not st.session_state["tasks"]:
     st.info("No tasks added yet.")
 else:
     for t in sorted(st.session_state["tasks"], key=lambda x: x["created_at"], reverse=True):
+        st.markdown(f"<div class='task-card'>", unsafe_allow_html=True)
         cols = st.columns([6, 1, 1])
         with cols[0]:
             icon = "✅" if t["completed"] else "⏳"
@@ -145,5 +134,4 @@ else:
             if st.button("❌", key=f"del_{t['id']}"):
                 delete_task(t["id"])
                 st.rerun()
-
-
+        st.markdown("</div>", unsafe_allow_html=True)
