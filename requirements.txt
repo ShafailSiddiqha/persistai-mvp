@@ -3,7 +3,7 @@ matplotlib
 pandas
 numpy
 requests
-streamlit-mic-recorder
+streamlit-mic-recorder==0.0.4
 openai
 openai-whisper
-
+ffmpeg-python
