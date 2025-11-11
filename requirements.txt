@@ -9,4 +9,8 @@ openai-whisper
 ffmpeg-python
 sounddevice
 wavio
+streamlit-mic-recorder
+soundfile
+ffmpeg-python
+
 
