@@ -5,7 +5,7 @@ numpy
 requests
 openai
 openai-whisper
-streamlit-mic-recorder==0.0.4
+audio-recorder-streamlit
 sounddevice
 soundfile
 ffmpeg-python
