@@ -1,6 +1,7 @@
 import streamlit as st
 import time
 import random
+import base64
 
 # ---------- PAGE CONFIG ----------
 st.set_page_config(page_title="Focus Companion Agent", page_icon="🎧", layout="centered")
@@ -41,6 +42,8 @@ if "xp" not in st.session_state:
     st.session_state["xp"] = 0
 if "focus_active" not in st.session_state:
     st.session_state["focus_active"] = False
+if "audio_started" not in st.session_state:
+    st.session_state["audio_started"] = False
 
 # ---------- HEADER ----------
 st.title("🎧 Focus Companion Agent")
@@ -66,8 +69,9 @@ if st.button("▶️ Start Focus Session"):
     st.session_state["focus_duration"] = duration * 60
     st.session_state["sound_choice"] = sound_choice
     st.session_state["focus_active"] = True
+    st.session_state["audio_started"] = False
     st.success(f"🧘 Focus session started with {sound_choice} sound")
-    st.session_state["audio_triggered"] = False
+    st.rerun()
 
 # ---------- TIMER ----------
 if st.session_state.get("focus_active", False):
@@ -80,25 +84,30 @@ if st.session_state.get("focus_active", False):
     st.progress(progress)
     st.metric("⏳ Time Remaining", f"{minutes_left:02d}:{seconds_left:02d}")
 
-    # ---------- FIXED AUDIO PLAYBACK ----------
+    # ---------- AUDIO PLAYBACK WITH STREAMLIT'S NATIVE PLAYER ----------
     sound_file = sound_links[st.session_state["sound_choice"]]
-    st.markdown(f"""
-        <audio id="focusSound" loop>
-            <source src="{sound_file}" type="audio/mpeg">
-            Your browser does not support the audio element.
-        </audio>
-        <script>
-            var audio = document.getElementById('focusSound');
-            // play only after user interaction
-            document.addEventListener('click', () => {{
-                if (audio.paused) {{
-                    audio.play().catch(err => console.log('Playback blocked:', err));
-                }}
-            }});
-        </script>
-    """, unsafe_allow_html=True)
+    
+    # Try to play audio using Streamlit's audio player
+    try:
+        import os
+        if os.path.exists(sound_file):
+            st.audio(sound_file, format="audio/mp3", loop=True)
+        else:
+            st.warning(f"⚠️ Audio file '{sound_file}' not found. Please ensure MP3 files are in the app directory.")
+    except Exception as e:
+        st.error(f"Audio playback error: {str(e)}")
+    
+    st.caption("🔊 Use the play button above to start the ambient sound")
 
-    st.caption("🔊 Tip: If you don't hear sound, click anywhere on the page once to activate audio.")
+    # ---------- STOP BUTTON ----------
+    if st.button("⏹ Stop Session"):
+        st.session_state["focus_active"] = False
+        st.info("Session ended early. Take a short break 🌿")
+        st.rerun()
+
+    # Auto-rerun every second to update timer
+    time.sleep(1)
+    st.rerun()
 
     # ---------- SESSION END ----------
     if remaining <= 0:
@@ -111,13 +120,9 @@ if st.session_state.get("focus_active", False):
         if loop_mode:
             st.info("🔁 Loop Mode active — restarting next Pomodoro...")
             time.sleep(3)
+            st.session_state["focus_start"] = time.time()
+            st.session_state["focus_active"] = True
             st.rerun()
-
-# ---------- STOP BUTTON ----------
-if st.session_state.get("focus_active", False):
-    if st.button("⏹ Stop Session"):
-        st.session_state["focus_active"] = False
-        st.info("Session ended early. Take a short break 🌿")
 
 # ---------- REWARD MESSAGE ----------
 if not st.session_state.get("focus_active", False) and "focus_start" in st.session_state:
@@ -126,8 +131,9 @@ if not st.session_state.get("focus_active", False) and "focus_start" in st.sessi
         "✨ You focused like a pro!",
         "💪 Great session — stay in flow!",
         "🌻 Calm mind, strong focus.",
-        "🎶 You’re building consistency.",
+        "🎶 You're building consistency.",
         "🧠 Another step toward mastery!"
     ]
     st.success(random.choice(rewards))
     st.metric("🏆 Total XP", st.session_state["xp"])
+    
