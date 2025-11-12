@@ -9,4 +9,5 @@ audio-recorder-streamlit
 sounddevice
 soundfile
 ffmpeg-python
+choco install ffmpeg
 wavio
