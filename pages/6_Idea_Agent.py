@@ -146,15 +146,19 @@ else:
                 st.caption(f"🕒 {idea['timestamp']} | 📁 {idea['category']}")
             else:
                 st.markdown(f"🎧 Voice Idea {idx}")
-                if os.path.exists(idea["text"]):
+                audio_path = os.path.abspath(idea["text"])
+                if os.path.exists(audio_path):
                     try:
-                        with open(idea["text"], "rb") as audio_file:
+                        with open(audio_path, "rb") as audio_file:
                             audio_bytes = audio_file.read()
-                            st.audio(audio_bytes, format="audio/wav")
+                            if len(audio_bytes) > 0:
+                                st.audio(audio_bytes, format="audio/wav")
+                            else:
+                                st.warning(f"⚠️ Audio file is empty")
                     except Exception as e:
                         st.warning(f"⚠️ Cannot play audio: {str(e)}")
                 else:
-                    st.warning(f"⚠️ Audio file not found: {idea['text']}")
+                    st.warning(f"⚠️ Audio file not found: {audio_path}")
                 st.caption(f"🕒 {idea['timestamp']}")
 
         with col2:
