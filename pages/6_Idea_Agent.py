@@ -28,8 +28,8 @@ h1,h2,h3 { color:#5A3EBA; text-align:center; }
 # ---------- SESSION ----------
 if "ideas" not in st.session_state:
     st.session_state["ideas"] = []
-if "last_audio_id" not in st.session_state:
-    st.session_state["last_audio_id"] = None
+if "last_audio_timestamp" not in st.session_state:
+    st.session_state["last_audio_timestamp"] = None
 
 # ---------- FILE ----------
 DATA_FILE = "ideas.json"
@@ -81,32 +81,36 @@ st.subheader("🎙️ Voice Capture")
 st.markdown("<small>Record your voice instantly if typing feels slow!</small>", unsafe_allow_html=True)
 
 try:
-    from streamlit_mic_recorder import mic_recorder
+    from audio_recorder_streamlit import audio_recorder
 
-    # Use a unique key and format
-    audio = mic_recorder(
-        start_prompt="🎙️ Start Recording", 
-        stop_prompt="⏹️ Stop Recording", 
-        key="recorder",
-        use_container_width=True
+    # Record audio with proper configuration
+    audio_bytes = audio_recorder(
+        text="Click to record",
+        recording_color="#e74c3c",
+        neutral_color="#3498db",
+        icon_name="microphone",
+        icon_size="2x",
+        pause_threshold=2.0,
+        sample_rate=16000
     )
 
-    if audio:
-        # Create a unique ID for this audio to prevent duplicate saves
-        audio_id = audio.get("id", str(datetime.now().timestamp()))
+    if audio_bytes:
+        # Create timestamp-based unique identifier
+        current_timestamp = datetime.now().timestamp()
         
-        # Only save if this is a new recording
-        if audio_id != st.session_state["last_audio_id"]:
+        # Only save if this is a NEW recording (different timestamp)
+        if st.session_state["last_audio_timestamp"] != current_timestamp:
             file_name = f"idea_{datetime.now().strftime('%Y%m%d_%H%M%S')}.wav"
             
             # Save the audio file
             with open(file_name, "wb") as f:
-                f.write(audio["bytes"])
+                f.write(audio_bytes)
             
             # Verify the file was saved and has content
-            if os.path.exists(file_name) and os.path.getsize(file_name) > 0:
-                st.audio(file_name)
-                st.success(f"✅ Voice idea saved as {file_name}")
+            file_size = os.path.getsize(file_name)
+            if file_size > 100:  # At least 100 bytes
+                st.audio(audio_bytes, format="audio/wav")
+                st.success(f"✅ Voice idea saved! ({file_size} bytes)")
 
                 st.session_state["ideas"].append({
                     "text": file_name,
@@ -115,17 +119,14 @@ try:
                     "type": "audio"
                 })
                 save_data(st.session_state["ideas"])
-                st.session_state["last_audio_id"] = audio_id
-                st.rerun()
+                st.session_state["last_audio_timestamp"] = current_timestamp
             else:
-                st.error("❌ Recording failed - no audio data captured.")
-        else:
-            # Show existing recording without re-saving
-            st.info("Recording already saved. Start a new recording if needed.")
+                st.error("❌ Recording too short or empty. Please try again.")
+                os.remove(file_name)  # Delete empty file
 
 except ImportError:
-    st.warning("⚠️ Voice recording requires 'streamlit-mic-recorder'. Add it to requirements.txt if not installed.")
-    st.code("pip install streamlit-mic-recorder")
+    st.warning("⚠️ Voice recording requires 'audio-recorder-streamlit'.")
+    st.code("pip install audio-recorder-streamlit", language="bash")
 except Exception as e:
     st.error(f"❌ Recording error: {str(e)}")
 
@@ -146,7 +147,12 @@ else:
             else:
                 st.markdown(f"🎧 Voice Idea {idx}")
                 if os.path.exists(idea["text"]):
-                    st.audio(idea["text"])
+                    try:
+                        with open(idea["text"], "rb") as audio_file:
+                            audio_bytes = audio_file.read()
+                            st.audio(audio_bytes, format="audio/wav")
+                    except Exception as e:
+                        st.warning(f"⚠️ Cannot play audio: {str(e)}")
                 else:
                     st.warning(f"⚠️ Audio file not found: {idea['text']}")
                 st.caption(f"🕒 {idea['timestamp']}")
@@ -156,20 +162,30 @@ else:
                 if st.button("🗣️ Transcribe", key=f"trans_{idx}"):
                     try:
                         import whisper
-                        with st.spinner("Transcribing..."):
+                        with st.spinner("Transcribing... (this may take a moment)"):
                             model = whisper.load_model("tiny")
                             result = model.transcribe(idea["text"])
-                            st.session_state["ideas"].append({
-                                "text": result["text"],
-                                "category": "Transcribed",
-                                "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-                                "type": "text"
-                            })
-                            save_data(st.session_state["ideas"])
-                            st.success("✅ Transcription complete!")
-                            st.rerun()
+                            
+                            if result["text"].strip():
+                                st.session_state["ideas"].append({
+                                    "text": result["text"].strip(),
+                                    "category": "Transcribed",
+                                    "timestamp": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
+                                    "type": "text"
+                                })
+                                save_data(st.session_state["ideas"])
+                                st.success("✅ Transcription complete!")
+                                st.rerun()
+                            else:
+                                st.warning("⚠️ No speech detected in recording.")
                     except ImportError:
                         st.error("❌ Whisper not installed. Run: pip install openai-whisper")
+                    except FileNotFoundError as e:
+                        if "ffmpeg" in str(e).lower():
+                            st.error("❌ FFmpeg not found. Install it first:")
+                            st.code("# Ubuntu/Debian:\nsudo apt-get install ffmpeg\n\n# macOS:\nbrew install ffmpeg\n\n# Windows:\nchoco install ffmpeg", language="bash")
+                        else:
+                            st.error(f"❌ File error: {str(e)}")
                     except Exception as e:
                         st.error(f"❌ Transcription failed: {str(e)}")
 
