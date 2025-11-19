@@ -124,4 +124,4 @@ if st.session_state["mood_logs"]:
 else:
     st.info("No mood entries yet. Log your first one above!")
 
-st.markdown("<center><small>Built by <b>Shafail Siddiqha</b> for Persist Ventures AI Challenge</small></center>", unsafe_allow_html=True)
+st.markdown("<center><small>Built by <b>Shafail Siddiqha</b> for Persist Ventures AI Assignment</small></center>", unsafe_allow_html=True)
